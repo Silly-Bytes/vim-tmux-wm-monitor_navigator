@@ -248,3 +248,56 @@ elif [[ "$1" == "tmux" ]];then
     esac
 fi
 ```
+
+
+## Vim-Tmux Navigator
+
+Modifying Tmux mappings to use above scripts will make it work for
+Tmux-Ratpoison traversing but when a Vim instance is on an Tmux edge pane it
+will not jump to the appropriate Ratpoison split. To solve it I forked the
+`vim-tmux-navigator` project and made the right changes to it in the
+[vim-tmux-wm-monitor
+branch](https://github.com/alx741/vim-tmux-navigator/tree/vim-tmux-wm-monitor)
+
+Then using [vim-plug](https://github.com/junegunn/vim-plug) I install it in my
+`.vimrc` with:
+
+    Plug 'alx741/vim-tmux-navigator', { 'branch': 'vim-tmux-wm-monitor' }
+
+
+## Mappings
+
+Putting all together requires the appropriate mappings for Ratpoison and Tmux.
+Vim is already configured with the forked plugin.
+
+
+### Ratpoison
+
+These lines on `.ratpoisonrc` will do the top level handling. Take into account
+the path to the `rat_tmux-navigator.sh` script.
+
+    definekey top C-k exec ~/.scripts/ratpoison/rat_tmux-navigator.sh rat up
+    definekey top C-j exec ~/.scripts/ratpoison/rat_tmux-navigator.sh rat down
+    definekey top C-l exec ~/.scripts/ratpoison/rat_tmux-navigator.sh rat right
+    definekey top C-h exec ~/.scripts/ratpoison/rat_tmux-navigator.sh rat left
+
+
+### Tmux
+
+Finally these lines on `.tmux.conf` are basically modified versions of the
+`vim-tmux-navigator` plugin ones.
+
+    is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
+        | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
+    bind-key C-h if-shell "$is_vim" "send-keys C-h"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux left'"
+    bind-key C-j if-shell "$is_vim" "send-keys C-j"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux down'"
+    bind-key C-k if-shell "$is_vim" "send-keys C-k"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux up'"
+    bind-key C-l if-shell "$is_vim" "send-keys C-l"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux right'"
+    bind-key -n C-h if-shell "$is_vim" "send-keys C-h"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux left'"
+    bind-key -n C-j if-shell "$is_vim" "send-keys C-j"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux down'"
+    bind-key -n C-k if-shell "$is_vim" "send-keys C-k"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux up'"
+    bind-key -n C-l if-shell "$is_vim" "send-keys C-l"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux right'"
+    bind-key h if-shell "$is_vim" "send-keys C-h"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux left'"
+    bind-key j if-shell "$is_vim" "send-keys C-j"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux down'"
+    bind-key k if-shell "$is_vim" "send-keys C-k"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux up'"
+    bind-key l if-shell "$is_vim" "send-keys C-l"  "run '~/.scripts/ratpoison/rat_tmux-navigator.sh tmux right'"
