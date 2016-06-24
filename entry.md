@@ -1,5 +1,7 @@
 # Seamlessly Vim-Tmux-WindowManager-Monitor navigator
 
+![](matrix1.jpg)
+
 [This Thoughtbot
 post](https://robots.thoughtbot.com/seamlessly-navigate-vim-and-tmux-splits)
 describes how to make Vim and Tmux *work together in Harmony* based on [this
@@ -22,6 +24,8 @@ detail the general algorithm is described.
 
 
 ## Frame-Monitor Navigation
+
+![](matrix2.jpg)
 
 When traversing frames (Ratpoison splits) it stops at the end of the current
 monitor, so first I needed to change to the left or right monitor when a
@@ -100,6 +104,8 @@ fi
 
 
 ## Ratpoison-Tmux Navigator
+
+![](matrix3.jpg)
 
 We need a way to pass movement commands to Tmux so Vim-Tmux navigation works as
 always, but we also need to pass movement commands from Tmux to Ratpoison when a
